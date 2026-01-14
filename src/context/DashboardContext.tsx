@@ -1,36 +1,32 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { financeData } from "@/data/financeData";
 
 type Month = keyof typeof financeData;
 
-type DashboardContextType = {
-  month: Month;
-  setMonth: (m: Month) => void;
-  data: (typeof financeData)[Month];
-};
-
-const DashboardContext = createContext<DashboardContextType | null>(null);
+const DashboardContext = createContext<any>(null);
 
 export function DashboardProvider({ children }: { children: React.ReactNode }) {
-  const [month, setMonth] = useState<Month>("January");
+  const months = Object.keys(financeData) as Month[];
+  const [month, setMonth] = useState<Month>(months[0]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, [month]);
+
+  const data = financeData[month];
 
   return (
     <DashboardContext.Provider
-      value={{
-        month,
-        setMonth,
-        data: financeData[month],
-      }}
+      value={{ month, setMonth, data, months, loading }}
     >
       {children}
     </DashboardContext.Provider>
   );
 }
 
-export function useDashboard() {
-  const ctx = useContext(DashboardContext);
-  if (!ctx) throw new Error("DashboardContext missing");
-  return ctx;
-}
+export const useDashboard = () => useContext(DashboardContext);
