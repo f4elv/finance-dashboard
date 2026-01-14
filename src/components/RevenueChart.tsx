@@ -17,7 +17,7 @@ export default function RevenueChart() {
     >
       <h2 className="text-xl font-semibold mb-6">Revenue Trend – {month}</h2>
 
-      <div className="h-[300px]">
+      <div className="h-75">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data.chart}>
             <XAxis dataKey="day" stroke="#94a3b8" />
